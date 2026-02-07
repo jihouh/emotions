@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feelings Explorer - Learn About Emotions</title>
+    <title>Feelings Explorer - Your Emotion Adventure</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Nunito:wght@400;600;700&display=swap');
         
@@ -14,14 +14,17 @@
         }
         
         :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
             --happy: #FFD93D;
-            --sad: #6BCB77;
-            --angry: #FF6B6B;
-            --scared: #9C89B8;
-            --excited: #4D96FF;
             --calm: #6BCB77;
+            --sad: #4D96FF;
+            --angry: #FF6B6B;
+            --worried: #9C89B8;
             --bg-cream: #FFFDF7;
             --text-dark: #2C3E50;
+            --alert: #e74c3c;
+            --warning: #f39c12;
         }
         
         body {
@@ -34,6 +37,1702 @@
         
         /* Floating bubbles background */
         .bubbles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+        
+        @keyframes rise {
+            0% { bottom: -100px; transform: translateX(0); }
+            50% { transform: translateX(100px); }
+            100% { bottom: 1080px; transform: translateX(-200px); }
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+            color: white;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            margin-bottom: 0.5rem;
+            animation: bounce 2s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Parent Portal Button */
+        .parent-portal-btn {
+            position: fixed;
+            top: 20: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .parent-portal-btn:hover {
+            transform: scale(1.05);
+            background: white;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            display: none;
+            background: var(--bg-cream);
+            border-radius: 30px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease;
+            min-height: 600px;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Welcome/Intro Section */
+        .welcome-container {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .character-big {
+            font-size: 6rem;
+            margin: 1rem 0;
+            animation: wave 2s ease infinite;
+            display: inline-block;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        
+        .name-input-container {
+            margin: 2rem 0;
+        }
+        
+        .name-input {
+            font-size: 1.5rem;
+            padding: 1rem 2rem;
+            border: 3px solid var(--primary);
+            border-radius: 50px;
+            text-align: center;
+            font-family: 'Fredoka', sans-serif;
+            width: 300px;
+            max-width: 90%;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .name-input:focus {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--happy) 0%, #ffb347 100%);
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            color: var(--text-dark);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Check-in Flow */
+        .checkin-flow {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 25px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .question-card.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .character-small {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        /* Response Options */
+        .response-options {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        
+        .feeling-btn {
+            background: white;
+            border: 4px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            min-width: 120px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .feeling-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .feeling-btn.selected {
+            border-color: var(--primary);
+            background: #f0f4ff;
+            transform: scale(1.15);
+        }
+        
+        .feeling-emoji {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feeling-label {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        /* Body Scanner */
+        .body-scanner {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 30px;
+            padding: 2rem;
+        }
+        
+        .body-outline {
+            font-size: 8rem;
+            text-align: center;
+            line-height: 1;
+        }
+        
+        .body-part {
+            position: absolute;
+            background: rgba(255,255,255,0.9);
+            border: 3px solid var(--primary);
+            border-radius: 15px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .body-part:hover, .body-part.selected {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .body-part.head { top: 10%; left: 50%; transform: translateX(-50%); }
+        .body-part.tummy { top: 40%; left: 50%; transform: translateX(-50%); }
+        .body-part.heart { top: 30%; left: 30%; }
+        .body-part.hands { top: 60%; left: 20%; }
+        .body-part.feet { bottom: 10%; left: 50%; transform: translateX(-50%); }
+        
+        /* Scale Slider */
+        .scale-container {
+            margin: 2rem 0;
+        }
+        
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .scale-slider {
+            width: 100%;
+            height: 20px;
+            border-radius: 10px;
+            background: linear-gradient(to right, var(--calm), var(--happy), var(--angry));
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .scale-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Thought Bubble */
+        .thought-bubble {
+            background: white;
+            border-radius: 30px;
+            padding: 2rem;
+            position: relative;
+            margin: 2rem 0;
+            border: 3px solid var(--primary);
+        }
+        
+        .thought-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50px;
+            border-width: 20px 20px 0;
+            border-style: solid;
+            border-color: var(--primary) transparent;
+            display: block;
+            width: 0;
+        }
+        
+        .text-area {
+            width: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1rem;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        /* Analysis Result */
+        .analysis-result {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .emotion-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            margin: 1rem 0;
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        /* Activity Cards */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .activity-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 4px solid transparent;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .activity-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .activity-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Breathing Exercise */
+        .breathing-container {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            position: relative;
+        }
+        
+        .breathing-circle.breathing {
+            animation: breathe 4s infinite ease-in-out;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        
+        /* Learning Section */
+        .learning-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .learning-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .learning-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 0.5rem;
+            margin: 2rem 0;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(to right, var(--happy), var(--calm));
+            height: 20px;
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* Parent Dashboard Styles */
+        .dashboard-section {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-section.active {
+            display: block;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .alert-box {
+            background: #fee;
+            border-left: 5px solid var(--alert);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .alert-box.critical {
+            background: #fee;
+            border-color: var(--alert);
+            animation: pulse 2s infinite;
+        }
+        
+        .alert-box.warning {
+            background: #fff3cd;
+            border-color: var(--warning);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .chart-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: 300px;
+            position: relative;
+        }
+        
+        .trend-line {
+            stroke: var(--primary);
+            stroke-width: 3;
+            fill: none;
+        }
+        
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .recommendation-list li {
+            background: #e8f5e9;
+            border-left: 4px solid var(--calm);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        /* Auth Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .auth-modal.active {
+            display: flex;
+        }
+        
+        .auth-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .pin-input {
+            font-size: 2rem;
+            letter-spacing: 1rem;
+            text-align: center;
+            width: 200px;
+            padding: 1rem;
+            border: 3px solid var(--primary);
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+        
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 9999;
+        }
+        
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .character-big { font-size: 4rem; }
+            .question-card { padding: 1.5rem; }
+            .response-options { gap: 1rem; }
+            .feeling-btn { min-width: 100px; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Bubbles -->
+    <div class="bubbles" id="bubbles"></div>
+    
+    <!-- Parent Portal Button -->
+    <button class="parent-portal-btn" onclick="openParentPortal()">
+        👨‍👩‍👧 Parent Portal
+    </button>
+    
+    <!-- Header -->
+    <header>
+        <h1>🌈 Feelings Explorer</h1>
+        <p class="subtitle">Your Adventure with Emotions</p>
+    </header>
+    
+    <div class="container">
+        <!-- INTRO SECTION -->
+        <div id="intro-section" class="content-section active">
+            <div class="welcome-container">
+                <div class="character-big">🦊</div>
+                <h2>Hi Friend! I'm Finley!</h2>
+                <p style="font-size: 1.3rem; margin-bottom: 2rem;">
+                    I'm so happy you're here! I want to get to know you better.<br>
+                    What's your name?
+                </p>
+                <div class="name-input-container">
+                    <input type="text" class="name-input" id="childName" placeholder="Your name" maxlength="20">
+                </div>
+                <button class="btn-primary" onclick="startJourney()">
+                    Let's Go! 🚀
+                </button>
+            </div>
+        </div>
+        
+        <!-- CHECK-IN FLOW -->
+        <div id="checkin-section" class="content-section">
+            <div class="checkin-flow">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+                </div>
+                
+                <!-- Question 1: Overall Feeling -->
+                <div class="question-card active" id="q1">
+                    <div class="character-small">🦊</div>
+                    <div class="question-text">
+                        Hi <span class="child-name-display">friend</span>! If your feeling was a weather, 
+                        what would it be today?
+                    </div>
+                    <div class="response-options">
+                        <div class="feeling-btn" onclick="selectFeeling('sunny', 1)">
+                            <span class="feeling-emoji">☀️</span>
+                            <span class="feeling-label">Sunny</span>
+                        </div>
+                        <div class="feeling-btn" onclick="selectFeeling('cloudy', 1)">
+                            <span class="feeling-emoji">☁️</span>
+                            <span class="feeling-label">Cloudy</span>
+                        </div>
+                        <div class="feeling-btn" onclick="selectFeeling('rainy', 1)">
+                            <span class="feeling-emoji">🌧️</span>
+                            <span class="feeling-label">Rainy</span>
+                        </div>
+                        <div class="feeling-btn" onclick="selectFeeling('stormy', 1)">
+                            <span class="feeling-emoji">⛈️</span>
+                            <span class="feeling-label">Stormy</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Question 2: Body Feelings -->
+                <div class="question-card" id="q2">
+                    <div class="character-small">🦊</div>
+                    <div class="question-text">
+                        Where in your body do you feel something strong right now?<br>
+                        <small>(Click all that feel true for you)</small>
+                    </div>
+                    <div class="body-scanner">
+                        <div class="body-outline">🧍</div>
+                        <div class="body-part head" onclick="toggleBodyPart(this, 'head')">🤯 Head</div>
+                        <div class="body-part heart" onclick="toggleBodyPart(this, 'heart')">❤️ Heart</div>
+                        <div class="body-part tummy" onclick="toggleBodyPart(this, 'tummy')">🦋 Tummy</div>
+                        <div class="body-part hands" onclick="toggleBodyPart(this, 'hands')">✋ Hands</div>
+                        <div class="body-part feet" onclick="toggleBodyPart(this, 'feet')">🦶 Feet</div>
+                    </div>
+                    <button class="btn-primary" onclick="nextQuestion(2)" style="display: block; margin: 1rem auto;">
+                        Next ➡️
+                    </button>
+                </div>
+                
+                <!-- Question 3: Energy Level -->
+                <div class="question-card" id="q3">
+                    <div class="character-small">🦊</div>
+                    <div class="question-text">
+                        How much energy is in your body right now?<br>
+                        Like a battery! 🔋
+                    </div>
+                    <div class="scale-container">
+                        <div class="scale-labels">
+                            <span>😴 Sleepy/Low</span>
+                            <span>😊 Just Right</span>
+                            <span>🤪 Super High!</span>
+                        </div>
+                        <input type="range" class="scale-slider" id="energyLevel" min="1" max="10" value="5" oninput="updateEnergyEmoji(this.value)">
+                        <div style="text-align: center; font-size: 3rem; margin-top: 1rem;" id="energyEmoji">⚡⚡⚡</div>
+                    </div>
+                    <button class="btn-primary" onclick="nextQuestion(3)" style="display: block; margin: 1rem auto;">
+                        Next ➡️
+                    </button>
+                </div>
+                
+                <!-- Question 4: Thoughts -->
+                <div class="question-card" id="q4">
+                    <div class="character-small">🦊</div>
+                    <div class="question-text">
+                        If your thoughts were bubbles, what would they say?<br>
+                        Or you can draw it! 🎨
+                    </div>
+                    <div class="thought-bubble">
+                        <textarea class="text-area" id="thoughtInput" placeholder="Type here or describe to a grown-up..."></textarea>
+                    </div>
+                    <button class="btn-primary" onclick="nextQuestion(4)" style="display: block; margin: 1rem auto;">
+                        Next ➡️
+                    </button>
+                </div>
+                
+                <!-- Question 5: What Helped -->
+                <div class="question-card" id="q5">
+                    <div class="character-small">🦊</div>
+                    <div class="question-text">
+                        What would help you feel just right right now?
+                    </div>
+                    <div class="response-options">
+                        <div class="feeling-btn" onclick="selectHelp('hug')">
+                            <span class="feeling-emoji">🤗</span>
+                            <span class="feeling-label">A Hug</span>
+                        </div>
+                        <div class="feeling-btn" onclick="selectHelp('play')">
+                            <span class="feeling-emoji">🎮</span>
+                            <span class="feeling-label">Play</span>
+                        </div>
+                        <div class="feeling-btn" onclick="selectHelp('quiet')">
+                            <span class="feeling-emoji">🤫</span>
+                            <span class="feeling-label">Quiet Time</span>
+                        </div>
+                        <div class="feeling-btn" onclick="selectHelp('talk')">
+                            <span class="feeling-emoji">💬</span>
+                            <span class="feeling-label">Talk</span>
+                        </div>
+                        <div class="feeling-btn" onclick="selectHelp('move')">
+                            <span class="feeling-emoji">🏃</span>
+                            <span class="feeling-label">Run/Jump</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analysis & Results -->
+                <div class="question-card" id="analysis">
+                    <div class="analysis-result">
+                        <div class="character-small">🦊</div>
+                        <h3 style="color: white;">Here's what I noticed...</h3>
+                        <div class="emotion-badge" id="detectedEmotion">Detecting...</div>
+                        <p id="emotionValidation" style="font-size: 1.2rem; margin: 1rem 0;"></p>
+                        <p id="copingSuggestion" style="font-size: 1.1rem; opacity: 0.9;"></p>
+                    </div>
+                    
+                    <h3 style="text-align: center; margin: 2rem 0;">Let's try something fun!</h3>
+                    <div class="activity-grid" id="activityGrid">
+                        <!-- Activities inserted by JS -->
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="btn-primary" onclick="showLearningSection()">
+                            Learn More About Feelings 📚
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ACTIVITIES SECTION -->
+        <div id="activities-section" class="content-section">
+            <h2>Your Special Activities</h2>
+            <div id="activityContent">
+                <!-- Dynamic activity content -->
+            </div>
+            <button class="btn-primary" onclick="backToCheckin()" style="margin-top: 2rem;">
+                Back to My Check-in ↩️
+            </button>
+        </div>
+        
+        <!-- LEARNING SECTION -->
+        <div id="learning-section" class="content-section">
+            <h2>Learning with Finley</h2>
+            <div class="character-small">🦊📚</div>
+            <p style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem;">
+                Let's learn about our feelings together!
+            </p>
+            
+            <div class="learning-grid">
+                <div class="learning-card" onclick="showLesson('emotions')">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎭</div>
+                    <h3>All Feelings Are OK</h3>
+                    <p>Even the tricky ones are important!</p>
+                </div>
+                <div class="learning-card" onclick="showLesson('body')">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🧍</div>
+                    <h3>Body Signals</h3>
+                    <p>How your body talks to you</p>
+                </div>
+                <div class="learning-card" onclick="showLesson('tools')">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🧰</div>
+                    <h3>Calm Down Tools</h3>
+                    <p>Your special toolkit</p>
+                </div>
+                <div class="learning-card" onclick="showLesson('help')">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🆘</div>
+                    <h3>Asking for Help</h3>
+                    <p>When and how to get help</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn-primary" onclick="backToCheckin()">
+                    Back to Home 🏠
+                </button>
+            </div>
+        </div>
+        
+        <!-- BREATHING ACTIVITY -->
+        <div id="breathing-activity" class="content-section">
+            <h2>Bubble Breathing with Finley</h2>
+            <div class="breathing-container">
+                <div class="character-small">🦊</div>
+                <p style="font-size: 1.2rem; margin-bottom: 1rem;">
+                    Let's blow bubbles together! Click the circle to start.
+                </p>
+                <div class="breathing-circle" id="breathingCircle" onclick="toggleBreathing()">
+                    <span id="breathText">Click Me!</span>
+                </div>
+                <div style="font-size: 1.3rem; margin-top: 1rem; font-weight: 600;" id="breathInstruction">
+                    Ready?
+                </div>
+                <button class="btn-primary" onclick="finishActivity()" style="margin-top: 2rem;">
+                    I Feel Better! ✨
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PARENT PORTAL AUTH MODAL -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-box">
+            <h2>🔒 Parent Portal</h2>
+            <p>Enter your PIN to access your child's wellbeing dashboard</p>
+            <input type="password" class="pin-input" id="pinInput" maxlength="4" placeholder="••••">
+            <br>
+            <button class="btn-primary" onclick="authenticateParent()">
+                Unlock 🔓
+            </button>
+            <br>
+            <button onclick="closeAuth()" style="background: none; border: none; color: #666; margin-top: 1rem; cursor: pointer;">
+                Cancel
+            </button>
+        </div>
+    </div>
+    
+    <!-- PARENT DASHBOARD -->
+    <div id="parent-dashboard" class="content-section" style="background: #f5f7fa;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="text-align: left;">👨‍👩‍👧 Parent Dashboard</h2>
+            <button onclick="closeParentPortal()" style="background: var(--angry); color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 20px; cursor: pointer;">
+                Close ✕
+            </button>
+        </div>
+        
+        <!-- Critical Alerts -->
+        <div id="criticalAlerts" style="display: none;">
+            <div class="alert-box critical">
+                <strong>🚨 CRITICAL ALERT:</strong> Multiple concerning patterns detected. Please consult a child mental health professional.
+            </div>
+        </div>
+        
+        <!-- Overview Metrics -->
+        <div class="dashboard-section active">
+            <h3>📊 Wellbeing Overview</h3>
+            <div class="dashboard-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Current Emotion Score</div>
+                    <div class="metric-value" id="emotionScore">--</div>
+                    <div style="font-size: 0.9rem; color: #666;">Out of 100</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Check-ins This Week</div>
+                    <div class="metric-value" id="checkinCount">--</div>
+                    <div style="font-size: 0.9rem; color: #666;">Goal: Daily</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Trend Direction</div>
+                    <div class="metric-value" id="trendDirection">--</div>
+                    <div style="font-size: 0.9rem; color: #666;">vs Last Week</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Primary Concern</div>
+                    <div class="metric-value" id="primaryConcern" style="font-size: 1.5rem;">--</div>
+                    <div style="font-size: 0.9rem; color: #666;">Most frequent</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Trend Chart -->
+        <div class="dashboard-section">
+            <h3>📈 Emotion Trend (Last 30 Days)</h3>
+            <div class="chart-container">
+                <canvas id="trendChart" width="800" height="250"></canvas>
+            </div>
+        </div>
+        
+        <!-- Pattern Analysis -->
+        <div class="dashboard-section">
+            <h3>🔍 Pattern Analysis</h3>
+            <div id="patternAnalysis">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+        
+        <!-- Recent Check-ins Log -->
+        <div class="dashboard-section">
+            <h3>📝 Recent Check-ins</h3>
+            <div id="checkinLog" style="max-height: 400px; overflow-y: auto;">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+        
+        <!-- Recommendations -->
+        <div class="dashboard-section">
+            <h3>💡 Recommendations for Parents</h3>
+            <ul class="recommendation-list" id="recommendations">
+                <!-- Dynamic content -->
+            </ul>
+        </div>
+        
+        <!-- Export/Print -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="btn-primary" onclick="exportData()">
+                📥 Export Report
+            </button>
+            <button class="btn-primary" onclick="window.print()" style="margin-left: 1rem;">
+                🖨️ Print Summary
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let childData = {
+            name: '',
+            checkins: JSON.parse(localStorage.getItem('checkins') || '[]'),
+            currentCheckin: {
+                date: new Date().toISOString(),
+                responses: {},
+                emotionScore: 50
+            }
+        };
+        
+        let currentQuestion = 1;
+        let breathing = false;
+        let breathInterval;
+        
+        // Initialize
+        createBubbles();
+        loadData();
+        
+        function createBubbles() {
+            const container = document.getElementById('bubbles');
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.width = bubble.style.height = Math.random() * 60 + 20 + 'px';
+                bubble.style.animationDelay = Math.random() * 15 + 's';
+                container.appendChild(bubble);
+            }
+        }
+        
+        function loadData() {
+            // Load saved data from localStorage
+            const saved = localStorage.getItem('childData');
+            if (saved) {
+                childData = JSON.parse(saved);
+            }
+        }
+        
+        function saveData() {
+            localStorage.setItem('childData', JSON.stringify(childData));
+            localStorage.setItem('checkins', JSON.stringify(childData.checkins));
+        }
+        
+        // Journey Start
+        function startJourney() {
+            const name = document.getElementById('childName').value.trim();
+            if (!name) {
+                alert('Please tell me your name first! 😊');
+                return;
+            }
+            childData.name = name;
+            document.querySelectorAll('.child-name-display').forEach(el => el.textContent = name);
+            showSection('checkin-section');
+            updateProgress();
+        }
+        
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+        
+        // Check-in Flow
+        function updateProgress() {
+            const progress = ((currentQuestion - 1) / 5) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressBar').textContent = Math.round(progress) + '%';
+        }
+        
+        function selectFeeling(feeling, questionNum) {
+            // Visual selection
+            event.currentTarget.classList.add('selected');
+            
+            // Save response
+            childData.currentCheckin.responses['q' + questionNum] = feeling;
+            
+            // Delay then next
+            setTimeout(() => {
+                document.getElementById('q' + questionNum).classList.remove('active');
+                document.getElementById('q' + (questionNum + 1)).classList.add('active');
+                currentQuestion++;
+                updateProgress();
+            }, 600);
+        }
+        
+        function toggleBodyPart(element, part) {
+            element.classList.toggle('selected');
+            const selected = document.querySelectorAll('.body-part.selected');
+            const parts = Array.from(selected).map(el => el.classList[1]);
+            childData.currentCheckin.responses.bodyParts = parts;
+        }
+        
+        function nextQuestion(num) {
+            if (num === 3) {
+                childData.currentCheckin.responses.energy = document.getElementById('energyLevel').value;
+            } else if (num === 4) {
+                childData.currentCheckin.responses.thoughts = document.getElementById('thoughtInput').value;
+            }
+            
+            document.getElementById('q' + num).classList.remove('active');
+            document.getElementById('q' + (num + 1)).classList.add('active');
+            currentQuestion++;
+            updateProgress();
+            
+            if (num === 4) {
+                setTimeout(analyzeEmotions, 500);
+            }
+        }
+        
+        function updateEnergyEmoji(val) {
+            const emojis = ['😴', '😪', '😌', '🙂', '😊', '😃', '🤩', '🤪', '😤', '🤯'];
+            document.getElementById('energyEmoji').textContent = emojis[val - 1];
+        }
+        
+        function selectHelp(help) {
+            childData.currentCheckin.responses.helpNeeded = help;
+            document.getElementById('q5').classList.remove('active');
+            document.getElementById('analysis').classList.add('active');
+            updateProgress();
+            analyzeEmotions();
+        }
+        
+        // Emotion Analysis Algorithm
+        function analyzeEmotions() {
+            const responses = childData.currentCheckin.responses;
+            let emotion = 'calm';
+            let score = 50;
+            let validation = '';
+            let suggestion = '';
+            let activities = [];
+            
+            // Algorithm based on responses
+            const weather = responses.q1;
+            const energy = parseInt(responses.energy);
+            const bodyParts = responses.bodyParts || [];
+            const thoughts = (responses.thoughts || '').toLowerCase();
+            
+            // Scoring logic
+            if (weather === 'stormy' || weather === 'rainy') {
+                score -= 20;
+                if (energy > 7) {
+                    emotion = 'angry';
+                    validation = "It sounds like you have BIG energy that feels hard to control. That's okay!";
+                    suggestion = "Let's find ways to let that energy out safely.";
+                    activities = ['breathing', 'movement', 'squeeze'];
+                } else {
+                    emotion = 'sad';
+                    score -= 10;
+                    validation = "It sounds like you're feeling heavy or down today.";
+                    suggestion = "Let's do something gentle to help your heart feel lighter.";
+                    activities = ['hug', 'draw', 'quiet'];
+                }
+            } else if (weather === 'cloudy') {
+                score -= 10;
+                if (energy < 4) {
+                    emotion = 'tired';
+                    validation = "You might be running low on energy today.";
+                    suggestion = "Let's recharge your battery!";
+                    activities = ['rest', 'water', 'snuggle'];
+                } else {
+                    emotion = 'worried';
+                    validation = "Something might be bothering you a little.";
+                    suggestion = "Let's talk about it or do something calming.";
+                    activities = ['talk', 'breathe', 'draw'];
+                }
+            } else {
+                score += 20;
+                emotion = 'happy';
+                validation = "You seem to be feeling pretty good!";
+                suggestion = "Let's keep that good energy going!";
+                activities = ['dance', 'share', 'create'];
+            }
+            
+            // Body signals adjustment
+            if (bodyParts.includes('head')) score -= 5;
+            if (bodyParts.includes('tummy') && emotion !== 'happy') score -= 5;
+            if (bodyParts.includes('heart') && energy > 7) score -= 5;
+            
+            // Thought analysis (simple keyword)
+            const negativeWords = ['mad', 'angry', 'sad', 'scared', 'worried', 'bad', 'hate', 'no', 'never'];
+            const positiveWords = ['happy', 'good', 'love', 'fun', 'yes', 'great', 'awesome'];
+            
+            negativeWords.forEach(word => {
+                if (thoughts.includes(word)) score -= 5;
+            });
+            positiveWords.forEach(word => {
+                if (thoughts.includes(word)) score += 5;
+            });
+            
+            // Clamp score
+            score = Math.max(0, Math.min(100, score));
+            
+            // Update UI
+            childData.currentCheckin.emotionScore = score;
+            childData.currentCheckin.primaryEmotion = emotion;
+            
+            const emotionEmojis = {
+                happy: '😊 Happy',
+                sad: '😢 Sad',
+                angry: '😠 Angry',
+                worried: '😨 Worried',
+                tired: '😴 Tired',
+                calm: '😌 Calm'
+            };
+            
+            document.getElementById('detectedEmotion').textContent = emotionEmojis[emotion];
+            document.getElementById('emotionValidation').textContent = validation;
+            document.getElementById('copingSuggestion').textContent = suggestion;
+            
+            // Generate activity cards
+            const activityGrid = document.getElementById('activityGrid');
+            activityGrid.innerHTML = '';
+            
+            const activityData = {
+                breathing: { icon: '🫁', title: 'Bubble Breathing', desc: 'Breathe with Finley' },
+                movement: { icon: '🏃', title: 'Energy Release', desc: 'Jump and shake it out' },
+                squeeze: { icon: '🧸', title: 'Squeeze Toy', desc: 'Squish something soft' },
+                hug: { icon: '🤗', title: 'Hug Time', desc: 'Ask for a warm hug' },
+                draw: { icon: '🎨', title: 'Draw Feelings', desc: 'Put feelings on paper' },
+                quiet: { icon: '🤫', title: 'Quiet Corner', desc: 'Rest in a cozy spot' },
+                rest: { icon: '😴', title: 'Power Nap', desc: 'Close your eyes a bit' },
+                water: { icon: '💧', title: 'Drink Water', desc: 'Cool down inside' },
+                talk: { icon: '💬', title: 'Talk It Out', desc: 'Tell someone' },
+                dance: { icon: '💃', title: 'Happy Dance', desc: 'Move your body' },
+                share: { icon: '🎁', title: 'Share Joy', desc: 'Tell someone good news' },
+                create: { icon: '✨', title: 'Make Something', desc: 'Build or craft' }
+            };
+            
+            activities.forEach(act => {
+                const data = activityData[act];
+                if (data) {
+                    const card = document.createElement('div');
+                    card.className = 'activity-card';
+                    card.style.borderColor = getEmotionColor(emotion);
+                    card.innerHTML = `
+                        <div class="activity-icon">${data.icon}</div>
+                        <div class="activity-title">${data.title}</div>
+                        <div style="color: #666; font-size: 0.9rem;">${data.desc}</div>
+                    `;
+                    card.onclick = () => startActivity(act);
+                    activityGrid.appendChild(card);
+                }
+            });
+            
+            // Save checkin
+            childData.checkins.push(childData.currentCheckin);
+            saveData();
+            
+            // Check for critical alerts
+            checkCriticalAlerts();
+        }
+        
+        function getEmotionColor(emotion) {
+            const colors = {
+                happy: '#FFD93D',
+                sad: '#4D96FF',
+                angry: '#FF6B6B',
+                worried: '#9C89B8',
+                tired: '#6BCB77',
+                calm: '#6BCB77'
+            };
+            return colors[emotion] || '#667eea';
+        }
+        
+        function startActivity(activity) {
+            if (activity === 'breathing') {
+                showSection('breathing-activity');
+            } else {
+                const content = document.getElementById('activityContent');
+                const messages = {
+                    movement: "Stand up! Jump 10 times, shake your arms, and wiggle your whole body! Feel the energy moving out?",
+                    squeeze: "Find something soft (pillow, stuffed animal, stress ball). Squeeze it as tight as you can... and let go. Feel your hands relax?",
+                    hug: "Go find someone you love and ask: 'Can I have a hug?' Feel their warmth?",
+                    draw: "Get paper and colors. Draw what your feeling looks like. Is it a color? A shape? A monster? Give it a name!",
+                    quiet: "Find a cozy corner. Put a blanket over you like a cocoon. Breathe slowly for 1 minute.",
+                    rest: "Lie down. Close your eyes. Imagine you're floating on a cloud. Rest for 5 minutes.",
+                    water: "Get a glass of cold water. Drink it slowly. Feel it cool your inside?",
+                    talk: "Find a grown-up you trust. Say: 'I want to tell you how I feel.' Use your words.",
+                    dance: "Put on your favorite song. Dance like nobody's watching! Feel the joy?",
+                    share: "Tell someone about something good today. Sharing makes happiness bigger!",
+                    create: "Build with blocks, make playdough, or draw. Creating helps feelings flow."
+                };
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">${getActivityIcon(activity)}</div>
+                        <h3>${messages[activity]}</h3>
+                        <button class="btn-primary" onclick="finishActivity()" style="margin-top: 2rem;">
+                            I Did It! 🌟
+                        </button>
+                    </div>
+                `;
+                showSection('activities-section');
+            }
+        }
+        
+        function getActivityIcon(activity) {
+            const icons = {
+                movement: '🏃', squeeze: '🧸', hug: '🤗', draw: '🎨',
+                quiet: '🤫', rest: '😴', water: '💧', talk: '💬',
+                dance: '💃', share: '🎁', create: '✨'
+            };
+            return icons[activity] || '⭐';
+        }
+        
+        function toggleBreathing() {
+            const circle = document.getElementById('breathingCircle');
+            const text = document.getElementById('breathText');
+            const instruction = document.getElementById('breathInstruction');
+            
+            if (!breathing) {
+                breathing = true;
+                circle.classList.add('breathing');
+                text.textContent = 'Breathe';
+                
+                let phase = 0;
+                breathInterval = setInterval(() => {
+                    if (phase === 0) {
+                        instruction.textContent = 'Breathe in... 🌬️';
+                        phase = 1;
+                    } else if (phase === 1) {
+                        instruction.textContent = 'Hold... 😊';
+                        phase = 2;
+                    } else {
+                        instruction.textContent = 'Breathe out... 💨';
+                        phase = 0;
+                    }
+                }, 2000);
+            } else {
+                breathing = false;
+                circle.classList.remove('breathing');
+                text.textContent = 'Click Me!';
+                instruction.textContent = 'Ready?';
+                clearInterval(breathInterval);
+            }
+        }
+        
+        function finishActivity() {
+            createConfetti();
+            setTimeout(() => {
+                alert('Great job! You took care of your feelings! 🌟');
+                backToCheckin();
+            }, 500);
+        }
+        
+        function backToCheckin() {
+            showSection('checkin-section');
+            // Reset for new checkin
+            childData.currentCheckin = {
+                date: new Date().toISOString(),
+                responses: {},
+                emotionScore: 50
+            };
+            currentQuestion = 1;
+            document.querySelectorAll('.question-card').forEach((card, idx) => {
+                card.classList.remove('active');
+                if (idx === 0) card.classList.add('active');
+            });
+            document.querySelectorAll('.feeling-btn, .body-part').forEach(el => {
+                el.classList.remove('selected');
+            });
+            updateProgress();
+        }
+        
+        function showLearningSection() {
+            showSection('learning-section');
+        }
+        
+        function showLesson(topic) {
+            const lessons = {
+                emotions: "All feelings are visitors. They come and go. Happy, sad, angry, scared - they're all okay to feel!",
+                body: "Your body talks to you! Tummy aches, fast heart, hot face - these are signals. Listen to them!",
+                tools: "Everyone needs tools! Breathing, hugging, drawing - find what works for YOU.",
+                help: "Asking for help is BRAVE. When feelings are too big, find a grown-up you trust."
+            };
+            alert('🦊 Finley says: ' + lessons[topic]);
+        }
+        
+        // Parent Portal Functions
+        function openParentPortal() {
+            document.getElementById('authModal').classList.add('active');
+        }
+        
+        function closeAuth() {
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('pinInput').value = '';
+        }
+        
+        function authenticateParent() {
+            const pin = document.getElementById('pinInput').value;
+            // Simple PIN for demo (in production, use proper auth)
+            if (pin === '1234') {
+                closeAuth();
+                showParentDashboard();
+            } else {
+                alert('Incorrect PIN. Please try again.');
+            }
+        }
+        
+        function showParentDashboard() {
+            showSection('parent-dashboard');
+            updateParentDashboard();
+        }
+        
+        function closeParentPortal() {
+            showSection('intro-section');
+        }
+        
+        function updateParentDashboard() {
+            const checkins = childData.checkins;
+            const recent = checkins.slice(-30); // Last 30 checkins
+            
+            // Calculate metrics
+            const avgScore = recent.length > 0 
+                ? Math.round(recent.reduce((sum, c) => sum + c.emotionScore, 0) / recent.length)
+                : 0;
+            
+            document.getElementById('emotionScore').textContent = avgScore;
+            document.getElementById('checkinCount').textContent = checkins.filter(c => {
+                const daysDiff = (new Date() - new Date(c.date)) / (1000 * 60 * 60 * 24);
+                return daysDiff <= 7;
+            }).length;
+            
+            // Trend direction
+            if (recent.length >= 2) {
+                const firstHalf = recent.slice(0, Math.floor(recent.length / 2));
+                const secondHalf = recent.slice(Math.floor(recent.length / 2));
+                const firstAvg = firstHalf.reduce((sum, c) => sum + c.emotionScore, 0) / firstHalf.length;
+                const secondAvg = secondHalf.reduce((sum, c) => sum + c.emotionScore, 0) / secondHalf.length;
+                
+                const diff = secondAvg - firstAvg;
+                const trendEl = document.getElementById('trendDirection');
+                if (diff > 5) {
+                    trendEl.textContent = '📈';
+                    trendEl.style.color = 'green';
+                } else if (diff < -5) {
+                    trendEl.textContent = '📉';
+                    trendEl.style.color = 'red';
+                } else {
+                    trendEl.textContent = '➡️';
+                    trendEl.style.color = 'orange';
+                }
+            }
+            
+            // Primary concern
+            const emotions = {};
+            recent.forEach(c => {
+                emotions[c.primaryEmotion] = (emotions[c.primaryEmotion] || 0) + 1;
+            });
+            const primary = Object.entries(emotions).sort((a, b) => b[1] - a[1])[0];
+            document.getElementById('primaryConcern').textContent = primary ? primary[0] : 'None';
+            
+            // Critical alerts check
+            checkCriticalAlerts();
+            
+            // Draw trend chart
+            drawTrendChart(recent);
+            
+            // Pattern analysis
+            analyzePatterns(recent);
+            
+            // Recent log
+            updateCheckinLog(checkins.slice(-10).reverse());
+            
+            // Recommendations
+            generateRecommendations(recent, avgScore);
+        }
+        
+        function checkCriticalAlerts() {
+            const checkins = childData.checkins;
+            const recent = checkins.slice(-7); // Last week
+            
+            let alerts = [];
+            
+            // Check for concerning patterns
+            const lowScores = recent.filter(c => c.emotionScore < 30);
+            if (lowScores.length >= 3) {
+                alerts.push("Multiple low emotion scores detected in the past week.");
+            }
+            
+            const angryCount = recent.filter(c => c.primaryEmotion === 'angry').length;
+            if (angryCount >= 3) {
+                alerts.push("Frequent anger episodes detected.");
+            }
+            
+            const sadCount = recent.filter(c => c.primaryEmotion === 'sad').length;
+            if (sadCount >= 4) {
+                alerts.push("Persistent sadness observed.");
+            }
+            
+            // Check for physical symptoms mentions
+            const physicalSymptoms = recent.filter(c => {
+                const bodyParts = c.responses.bodyParts || [];
+                return bodyParts.includes('head') || bodyParts.includes('tummy');
+            });
+            if (physicalSymptoms.length >= 3) {
+                alerts.push("Recurring physical complaints (headaches/stomach aches).");
+            }
+            
+            // Show alerts
+            const alertDiv = document.getElementById('criticalAlerts');
+            if (alerts.length > 0 && document.getElementById('parent-dashboard').classList.contains('active')) {
+                alertDiv.style.display = 'block';
+                alertDiv.innerHTML = alerts.map(alert => 
+                    `<div class="alert-box critical"><strong>🚨 CRITICAL:</strong> ${alert} Please consider consulting a professional.</div>`
+                ).join('');
+            } else {
+                alertDiv.style.display = 'none';
+            }
+        }
+        
+        function drawTrendChart(checkins) {
+            const canvas = document.getElementById('trendChart');
+            if (!canvas.getContext) return;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (checkins.length < 2) {
+                ctx.font = '20px Arial';
+                ctx.fillStyle = '#666';
+                ctx.fillText('Not enough data yet. Check in daily!', 250, 125);
+                return;
+            }
+            
+            const padding = 40;
+            const width = canvas.width - 2 * padding;
+            const height = canvas.height - 2 * padding;
+            
+            // Draw axes
+            ctx.strokeStyle = '#ddd';
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+            
+            // Draw trend line
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            checkins.forEach((checkin, i) => {
+                const x = padding + (i / (checkins.length - 1)) * width;
+                const y = (canvas.height - padding) - (checkin.emotionScore / 100) * height;
+                
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+                
+                // Draw point
+                ctx.fillStyle = checkin.emotionScore < 30 ? '#e74c3c' : 
+                               checkin.emotionScore < 50 ? '#f39c12' : '#6BCB77';
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            ctx.stroke();
+            
+            // Labels
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.fillText('0', padding - 20, canvas.height - padding);
+            ctx.fillText('50', padding - 25, canvas.height / 2);
+            ctx.fillText('100', padding - 30, padding);
+        }
+        
+        function analyzePatterns(checkins) {
+            const container = document.getElementById('patternAnalysis');
+            
+            if (checkins.length < 3) {
+                container.innerHTML = '<p>Not enough data for pattern analysis yet. Encourage daily check-ins!</p>';
+                return;
+            }
+            
+            // Time of day analysis (simplified)
+            const lowEnergyDays = checkins.filter(c => c.responses.energy < 4).length;
+            const highAngerDays = checkins.filter(c => c.primaryEmotion === 'angry').length;
+            
+            let html = '<ul style="list-style: none; padding: 0;">';
+            
+            if (lowEnergyDays > checkins.length / 2) {
+                html += '<li style="padding: 0.5rem; background: #fff3cd; margin-bottom: 0.5rem; border-radius: 5px;">⚠️ Low energy reported frequently. Consider sleep schedule review.</li>';
+            }
+            
+            if (highAngerDays > 2) {
+                html += '<li style="padding: 0.5rem; background: #fee; margin-bottom: 0.5rem; border-radius: 5px;">⚠️ Anger episodes detected. Practice coping strategies together.</li>';
+            }
+            
+            // Body signals pattern
+            const tummyIssues = checkins.filter(c => {
+                const parts = c.responses.bodyParts || [];
+                return parts.includes('tummy');
+            }).length;
+            
+            if (tummyIssues > 2) {
+                html += '<li style="padding: 0.5rem; background: #fee; margin-bottom: 0.5rem; border-radius: 5px;">🩺 Recurring stomach complaints. Consider pediatric consultation.</li>';
+            }
+            
+            html += '</ul>';
+            container.innerHTML = html;
+        }
+        
+        function updateCheckinLog(checkins) {
+            const container = document.getElementById('checkinLog');
+            
+            if (checkins.length === 0) {
+                container.innerHTML = '<p>No check-ins yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = checkins.map(c => {
+                const date = new Date(c.date).toLocaleDateString();
+                const emotion = c.primaryEmotion || 'unknown';
+                const score = c.emotionScore;
+                const color = score < 30 ? '#e74c3c' : score < 50 ? '#f39c12' : '#6BCB77';
+                
+                return `
+                    <div style="border-left: 4px solid ${color}; padding: 1rem; margin-bottom: 1rem; background: #f8f9fa; border-radius: 0 10px 10px 0;">
+                        <strong>${date}</strong> - Score: ${score}/100<br>
+                        Emotion: ${emotion} | Energy: ${c.responses.energy}/10<br>
+                        <small>Body: ${(c.responses.bodyParts || []).join(', ') || 'None reported'}</small><br>
+                        <small>Thoughts: "${c.responses.thoughts || 'None shared'}"</small>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function generateRecommendations(checkins, avgScore) {
+            const list = document.getElementById('recommendations');
+            const recs = [];
+            
+            if (avgScore < 40) {
+                recs.push("🚨 Priority: Schedule consultation with child psychologist. Consistently low scores detected.");
+                recs.push("Create a 'feelings safe space' at home with comfort items.");
+                recs.push("Establish daily 1-on-1 connection time without distractions.");
+            } else if (avgScore < 60) {
+                recs.push("Increase emotional check-ins to twice daily (morning and evening).");
+                recs.push("Practice coping strategies together when child is calm.");
+                recs.push("Validate feelings: 'I see you're feeling ___. That's okay.'");
+            } else {
+                recs.push("Maintain current supportive practices. Child is doing well!");
+                recs.push("Continue encouraging emotional expression.");
+                recs.push("Teach advanced emotion words as they grow.");
+            }
+            
+            if (checkins.some(c => c.primaryEmotion === 'angry')) {
+                recs.push("For anger: Teach 'turtle technique' - stop, tuck, breathe, solve.");
+            }
+            
+            if (checkins.some(c => c.primaryEmotion === 'worried')) {
+                recs.push("For anxiety: Practice 'worry time' - 10 minutes daily to discuss worries.");
+            }
+            
+            list.innerHTML = recs.map(r => `<li>${r}</li>`).join('');
+        }
+        
+        function exportData() {
+            const dataStr = JSON.stringify(childData.checkins, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `child_wellbeing_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+        
+        // Confetti Effect
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = ['#ff0', '#f0f', '#0ff', '#0f0', '#ff6b6b'][Math.floor(Math.random() * 5)];
+                confetti.style.animationDuration = Math.random() * 2 + 2 + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+        
+        // Close modal on outside click
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) closeAuth();
+        });
+    </script>
+</body>
+</html>
             position: fixed;
             width: 100%;
             height: 100%;
