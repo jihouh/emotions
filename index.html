@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feelings Explorer - Learn About Emotions</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Nunito:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --happy: #FFD93D;
+            --sad: #6BCB77;
+            --angry: #FF6B6B;
+            --scared: #9C89B8;
+            --excited: #4D96FF;
+            --calm: #6BCB77;
+            --bg-cream: #FFFDF7;
+            --text-dark: #2C3E50;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-dark);
+        }
+        
+        /* Floating bubbles background */
+        .bubbles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+        
+        @keyframes rise {
+            0% { bottom: -100px; transform: translateX(0); }
+            50% { transform: translateX(100px); }
+            100% { bottom: 1080px; transform: translateX(-200px); }
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            margin-bottom: 0.5rem;
+            animation: bounce 2s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            background: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            color: var(--text-dark);
+        }
+        
+        .tab-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .tab-btn.active {
+            background: var(--happy);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* Content Sections */
+        .content-section {
+            display: none;
+            background: var(--bg-cream);
+            border-radius: 30px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        /* Emotion Cards Grid */
+        .emotion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .emotion-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .emotion-card:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .emotion-card.happy { border-color: var(--happy); background: #FFF9E6; }
+        .emotion-card.sad { border-color: var(--sad); background: #E8F5E9; }
+        .emotion-card.angry { border-color: var(--angry); background: #FFEBEE; }
+        .emotion-card.scared { border-color: var(--scared); background: #F3E5F5; }
+        .emotion-card.excited { border-color: var(--excited); background: #E3F2FD; }
+        
+        .emotion-emoji {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            transition: transform 0.3s;
+        }
+        
+        .emotion-card:hover .emotion-emoji {
+            transform: scale(1.2) rotate(-5deg);
+        }
+        
+        .emotion-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .emotion-desc {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        /* Emotion Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 30px;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.4s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover {
+            color: var(--angry);
+        }
+        
+        .modal-emoji {
+            font-size: 5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .strategy-box {
+            background: #f0f4ff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 5px solid var(--excited);
+        }
+        
+        .strategy-box h3 {
+            color: var(--excited);
+            font-family: 'Fredoka', sans-serif;
+            margin-bottom: 0.5rem;
+        }
+        
+        .strategy-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .strategy-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .strategy-list li:before {
+            content: "🌟";
+            position: absolute;
+            left: 0;
+        }
+        
+        /* Zones of Regulation */
+        .zones-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .zone-card {
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .zone-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .zone-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .zone-green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .zone-yellow { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .zone-red { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
+        
+        .zone-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .zone-feelings {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .zone-tools {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .zone-tools h4 {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .zone-tools ul {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+        
+        .zone-tools li {
+            padding: 0.2rem 0;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+        
+        .zone-tools li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        /* Breathing Exercise */
+        .breathing-container {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            position: relative;
+        }
+        
+        .breathing-circle.breathing {
+            animation: breathe 4s infinite ease-in-out;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        
+        .breathing-instruction {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin-top: 1rem;
+            font-weight: 600;
+            min-height: 2rem;
+        }
+        
+        .start-breathing-btn {
+            background: var(--excited);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .start-breathing-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(77, 150, 255, 0.4);
+        }
+        
+        /* Calm Down Toolkit */
+        .toolkit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid #e0e0e0;
+        }
+        
+        .tool-card:hover {
+            border-color: var(--calm);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-name {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+        
+        /* Check-in Section */
+        .check-in-container {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .check-in-question {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        
+        .feeling-selector {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .feeling-option {
+            font-size: 4rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            filter: grayscale(0.3);
+        }
+        
+        .feeling-option:hover {
+            transform: scale(1.3);
+            filter: grayscale(0);
+        }
+        
+        .feeling-option.selected {
+            transform: scale(1.4);
+            filter: grayscale(0);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.4); }
+            50% { transform: scale(1.5); }
+        }
+        
+        .response-area {
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .response-area.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* Turtle Technique Visual */
+        .turtle-container {
+            background: #e8f5e9;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .turtle-steps {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .turtle-step {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            flex: 1;
+            min-width: 150px;
+            border: 3px solid #4caf50;
+            transition: transform 0.3s;
+        }
+        
+        .turtle-step:hover {
+            transform: translateY(-5px);
+        }
+        
+        .step-number {
+            background: #4caf50;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        .step-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .emotion-grid { grid-template-columns: repeat(2, 1fr); }
+            .feeling-selector { gap: 1rem; }
+            .feeling-option { font-size: 3rem; }
+        }
+        
+        /* Confetti Animation */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 9999;
+        }
+        
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Character Guide */
+        .character-guide {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 20px;
+            padding: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 300px;
+            z-index: 100;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .character-guide:hover {
+            transform: scale(1.05);
+        }
+        
+        .character-avatar {
+            font-size: 3rem;
+            animation: wave 2s ease infinite;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-20deg); }
+            75% { transform: rotate(20deg); }
+        }
+        
+        .character-text {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+        
+        .character-name {
+            font-weight: 700;
+            color: var(--excited);
+            font-family: 'Fredoka', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Bubbles Background -->
+    <div class="bubbles" id="bubbles"></div>
+    
+    <!-- Header -->
+    <header>
+        <h1>🌈 Feelings Explorer</h1>
+        <p class="subtitle">Learn about your emotions and become a feelings superhero!</p>
+    </header>
+    
+    <!-- Character Guide -->
+    <div class="character-guide" onclick="showTip()">
+        <div class="character-avatar">🦊</div>
+        <div class="character-text">
+            <div class="character-name">Finley the Fox</div>
+            <div>Click me for a tip!</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showSection('emotions')">🎭 Emotions</button>
+            <button class="tab-btn" onclick="showSection('zones')">🚦 Zones</button>
+            <button class="tab-btn" onclick="showSection('breathe')">🫁 Breathe</button>
+            <button class="tab-btn" onclick="showSection('tools')">🧰 Toolkit</button>
+            <button class="tab-btn" onclick="showSection('checkin')">✅ Check-in</button>
+        </div>
+        
+        <!-- Emotions Section -->
+        <div id="emotions" class="content-section active">
+            <h2>Meet the Emotion Friends!</h2>
+            <p style="text-align: center; font-size: 1.2rem; margin-bottom: 1rem; color: #666;">
+                Click on each emotion to learn more about it and how to handle it!
+            </p>
+            <div class="emotion-grid">
+                <div class="emotion-card happy" onclick="showEmotion('happy')">
+                    <span class="emotion-emoji">😊</span>
+                    <div class="emotion-name">Happy</div>
+                    <div class="emotion-desc">Feeling good and joyful!</div>
+                </div>
+                <div class="emotion-card sad" onclick="showEmotion('sad')">
+                    <span class="emotion-emoji">😢</span>
+                    <div class="emotion-name">Sad</div>
+                    <div class="emotion-desc">Feeling down or blue</div>
+                </div>
+                <div class="emotion-card angry" onclick="showEmotion('angry')">
+                    <span class="emotion-emoji">😠</span>
+                    <div class="emotion-name">Angry</div>
+                    <div class="emotion-desc">Feeling mad or frustrated</div>
+                </div>
+                <div class="emotion-card scared" onclick="showEmotion('scared')">
+                    <span class="emotion-emoji">😨</span>
+                    <div class="emotion-name">Worried</div>
+                    <div class="emotion-desc">Feeling scared or nervous</div>
+                </div>
+                <div class="emotion-card excited" onclick="showEmotion('excited')">
+                    <span class="emotion-emoji">🤗</span>
+                    <div class="emotion-name">Excited</div>
+                    <div class="emotion-desc">Feeling super energetic!</div>
+                </div>
+                <div class="emotion-card" style="background: #FFF3E0; border-color: #FF9800;" onclick="showEmotion('tired')">
+                    <span class="emotion-emoji">😴</span>
+                    <div class="emotion-name">Tired</div>
+                    <div class="emotion-desc">Feeling sleepy or low energy</div>
+                </div>
+            </div>
+            
+            <!-- Turtle Technique -->
+            <div class="turtle-container">
+                <h3 style="font-family: 'Fredoka', sans-serif; color: #2e7d32; font-size: 1.8rem; margin-bottom: 0.5rem;">
+                    🐢 The Turtle Technique
+                </h3>
+                <p>When feelings get too big, be like Tucker Turtle!</p>
+                <div class="turtle-steps">
+                    <div class="turtle-step">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">👀</div>
+                        <div><strong>Recognize</strong><br>Notice your feeling</div>
+                    </div>
+                    <div class="turtle-step">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">🛑</div>
+                        <div><strong>Stop</strong><br>Think "pause"</div>
+                    </div>
+                    <div class="turtle-step">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">🐢</div>
+                        <div><strong>Tuck</strong><br>Breathe in your shell</div>
+                    </div>
+                    <div class="turtle-step">
+                        <div class="step-number">4</div>
+                        <div class="step-icon">💡</div>
+                        <div><strong>Solve</strong><br>Think of a solution</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Zones Section -->
+        <div id="zones" class="content-section">
+            <h2>Zones of Regulation</h2>
+            <p style="text-align: center; font-size: 1.2rem; margin-bottom: 1rem; color: #666;">
+                Just like traffic lights, our feelings have different zones. Click each zone to learn more!
+            </p>
+            <div class="zones-container">
+                <div class="zone-card zone-blue" onclick="expandZone(this)">
+                    <div class="zone-title">🔵 Blue Zone</div>
+                    <div class="zone-feelings">Slow & Low Energy</div>
+                    <div>Sad, Tired, Sick, Bored</div>
+                    <div class="zone-tools">
+                        <h4>Tools to Try:</h4>
+                        <ul>
+                            <li>Take a break</li>
+                            <li>Ask for a hug</li>
+                            <li>Drink water</li>
+                            <li>Stretch your body</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="zone-card zone-green" onclick="expandZone(this)">
+                    <div class="zone-title">🟢 Green Zone</div>
+                    <div class="zone-feelings">Good to Go!</div>
+                    <div>Happy, Calm, Focused, Proud</div>
+                    <div class="zone-tools">
+                        <h4>Keep it up!</h4>
+                        <ul>
+                            <li>Keep doing what you're doing</li>
+                            <li>Help a friend</li>
+                            <li>Learn new things</li>
+                            <li>Be creative</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="zone-card zone-yellow" onclick="expandZone(this)">
+                    <div class="zone-title">🟡 Yellow Zone</div>
+                    <div class="zone-feelings">Caution! Losing Control</div>
+                    <div>Frustrated, Worried, Excited, Silly</div>
+                    <div class="zone-tools">
+                        <h4>Tools to Try:</h4>
+                        <ul>
+                            <li>Belly breaths</li>
+                            <li>Take a walk</li>
+                            <li>Push against a wall</li>
+                            <li>Use positive self-talk</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="zone-card zone-red" onclick="expandZone(this)">
+                    <div class="zone-title">🔴 Red Zone</div>
+                    <div class="zone-feelings">Stop! Big Feelings!</div>
+                    <div>Angry, Terrified, Panicked, Elated</div>
+                    <div class="zone-tools">
+                        <h4>Tools to Try:</h4>
+                        <ul>
+                            <li>Count to 10</li>
+                            <li>Take deep breaths</li>
+                            <li>Ask for help</li>
+                            <li>Take a time-out</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breathing Section -->
+        <div id="breathe" class="content-section">
+            <h2>Bubble Breathing</h2>
+            <div class="breathing-container">
+                <p style="font-size: 1.2rem; color: #666; margin-bottom: 1rem;">
+                    Click the circle and breathe with it! Breathe in as it gets bigger, breathe out as it gets smaller.
+                </p>
+                <div class="breathing-circle" id="breathingCircle" onclick="toggleBreathing()">
+                    <span id="breathText">Click to Start!</span>
+                </div>
+                <div class="breathing-instruction" id="breathInstruction">Ready to breathe?</div>
+                <button class="start-breathing-btn" onclick="toggleBreathing()">Start Breathing Exercise</button>
+            </div>
+            
+            <div style="background: #e3f2fd; border-radius: 20px; padding: 2rem; margin-top: 2rem;">
+                <h3 style="font-family: 'Fredoka', sans-serif; color: #1976d2; margin-bottom: 1rem;">Other Breathing Games:</h3>
+                <div class="toolkit-grid">
+                    <div class="tool-card" onclick="alert('Pretend you\'re smelling a flower (breathe in) and blowing out a candle (breathe out)!')">
+                        <div class="tool-icon">🌸🎂</div>
+                        <div class="tool-name">Flower & Candle</div>
+                    </div>
+                    <div class="tool-card" onclick="alert('Pretend you\'re blowing up a balloon! Big breath in, slow blow out.')">
+                        <div class="tool-icon">🎈</div>
+                        <div class="tool-name">Balloon Breath</div>
+                    </div>
+                    <div class="tool-card" onclick="alert('Place your hand on your belly. Watch it rise and fall like waves in the ocean.')">
+                        <div class="tool-icon">🌊</div>
+                        <div class="tool-name">Ocean Belly</div>
+                    </div>
+                    <div class="tool-card" onclick="alert('Breathe in for 4 counts, hold for 4, out for 4. Like a box!')">
+                        <div class="tool-icon">📦</div>
+                        <div class="tool-name">Box Breathing</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toolkit Section -->
+        <div id="tools" class="content-section">
+            <h2>My Calm Down Toolkit</h2>
+            <p style="text-align: center; font-size: 1.2rem; margin-bottom: 1rem; color: #666;">
+                Click on a tool to see how to use it when feelings get big!
+            </p>
+            <div class="toolkit-grid">
+                <div class="tool-card" onclick="showToolDetail('water')">
+                    <div class="tool-icon">💧</div>
+                    <div class="tool-name">Water Break</div>
+                </div>
+                <div class="tool-card" onclick="showToolDetail('walk')">
+                    <div class="tool-icon">🚶</div>
+                    <div class="tool-name">Take a Walk</div>
+                </div>
+                <div class="tool-card" onclick="showToolDetail('hug')">
+                    <div class="tool-icon">🤗</div>
+                    <div class="tool-name">Ask for a Hug</div>
+                </div>
+                <div class="tool-card" onclick="showToolDetail('draw')">
+                    <div class="tool-icon">🎨</div>
+                    <div class="tool-name">Draw It Out</div>
+                </div>
+                <div class="tool-card" onclick="showToolDetail('music')">
+                    <div class="tool-icon">🎵</div>
+                    <div class="tool-name">Listen to Music</div>
+                </div>
+                <div class="tool-card" onclick="showToolDetail('squeeze')">
+                    <div class="tool-icon">🧸</div>
+                    <div class="tool-name">Squeeze a Toy</div>
+                </div>
+                <div class="tool-card" onclick="showToolDetail('count')">
+                    <div class="tool-icon">🔢</div>
+                    <div class="tool-name">Count to 10</div>
+                </div>
+                <div class="tool-card" onclick="showToolDetail('talk')">
+                    <div class="tool-icon">💬</div>
+                    <div class="tool-name">Talk About It</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Check-in Section -->
+        <div id="checkin" class="content-section">
+            <h2>Feelings Check-in</h2>
+            <div class="check-in-container">
+                <div class="check-in-question">How are you feeling right now?</div>
+                <div class="feeling-selector">
+                    <div class="feeling-option" onclick="selectFeeling(this, 'happy')" title="Happy">😊</div>
+                    <div class="feeling-option" onclick="selectFeeling(this, 'sad')" title="Sad">😢</div>
+                    <div class="feeling-option" onclick="selectFeeling(this, 'angry')" title="Angry">😠</div>
+                    <div class="feeling-option" onclick="selectFeeling(this, 'scared')" title="Worried">😨</div>
+                    <div class="feeling-option" onclick="selectFeeling(this, 'excited')" title="Excited">🤗</div>
+                    <div class="feeling-option" onclick="selectFeeling(this, 'tired')" title="Tired">😴</div>
+                </div>
+                
+                <div class="response-area" id="responseArea">
+                    <h3 id="responseTitle" style="font-family: 'Fredoka', sans-serif; color: var(--text-dark); margin-bottom: 1rem;"></h3>
+                    <p id="responseText" style="font-size: 1.1rem; margin-bottom: 1.5rem;"></p>
+                    <div id="responseStrategies" style="background: white; border-radius: 15px; padding: 1.5rem; text-align: left;"></div>
+                    <button onclick="createConfetti()" style="margin-top: 1.5rem; background: var(--happy); border: none; padding: 1rem 2rem; border-radius: 50px; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; cursor: pointer; color: var(--text-dark);">
+                        I Got This! 🌟
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Emotion Details -->
+    <div class="modal" id="emotionModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-emoji" id="modalEmoji"></div>
+            <h2 id="modalTitle" style="font-family: 'Fredoka', sans-serif; text-align: center; margin-bottom: 1rem;"></h2>
+            <p id="modalDesc" style="text-align: center; font-size: 1.1rem; margin-bottom: 1.5rem; color: #666;"></p>
+            
+            <div class="strategy-box">
+                <h3>🌟 What can I do?</h3>
+                <ul class="strategy-list" id="modalStrategies"></ul>
+            </div>
+            
+            <div style="background: #fff3e0; border-radius: 15px; padding: 1.5rem; margin-top: 1rem;">
+                <h3 style="color: #e65100; font-family: 'Fredoka', sans-serif; margin-bottom: 0.5rem;">💭 Remember:</h3>
+                <p id="modalRemember" style="color: #666;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating bubbles
+        function createBubbles() {
+            const container = document.getElementById('bubbles');
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.width = bubble.style.height = Math.random() * 60 + 20 + 'px';
+                bubble.style.animationDelay = Math.random() * 15 + 's';
+                bubble.style.animationDuration = Math.random() * 10 + 10 + 's';
+                container.appendChild(bubble);
+            }
+        }
+        createBubbles();
+        
+        // Tab Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
+        // Emotion Detail Data
+        const emotionData = {
+            happy: {
+                emoji: '😊',
+                title: 'Happy',
+                desc: 'You feel good, safe, and joyful! Your body might feel light and energetic.',
+                strategies: [
+                    'Share your happiness with someone you love',
+                    'Draw a picture of what made you happy',
+                    'Do a happy dance!',
+                    'Write down 3 things you\'re grateful for'
+                ],
+                remember: 'All feelings come and go, and that\'s okay! Enjoy this happy feeling.'
+            },
+            sad: {
+                emoji: '😢',
+                title: 'Sad',
+                desc: 'You feel down, heavy, or like crying. Maybe something didn\'t go your way or you miss someone.',
+                strategies: [
+                    'It\'s okay to cry - let it out',
+                    'Ask for a hug from someone you trust',
+                    'Draw your feelings or write them down',
+                    'Do something gentle like reading a book',
+                    'Talk to someone about why you\'re sad'
+                ],
+                remember: 'It\'s okay to feel sad. This feeling will pass like clouds in the sky.'
+            },
+            angry: {
+                emoji: '😠',
+                title: 'Angry',
+                desc: 'You feel hot, tense, or like yelling. Maybe something feels unfair or frustrating.',
+                strategies: [
+                    'Use the Turtle Technique: Stop, Tuck, Breathe',
+                    'Take 5 deep breaths',
+                    'Squeeze a pillow or stress ball',
+                    'Take a break in a quiet spot',
+                    'Use your words: "I feel angry because..."'
+                ],
+                remember: 'It\'s okay to feel angry, but it\'s not okay to hurt yourself or others.'
+            },
+            scared: {
+                emoji: '😨',
+                title: 'Worried/Scared',
+                desc: 'You feel nervous, your heart might beat fast, or you want to hide.',
+                strategies: [
+                    'Take slow, deep breaths',
+                    'Ask yourself: Is this a real danger or just a worry?',
+                    'Talk to a grown-up you trust',
+                    'Hold something comforting like a stuffed animal',
+                    'Draw what scares you and then draw yourself being brave'
+                ],
+                remember: 'You are safe right now. Worries are like waves - they come and go.'
+            },
+            excited: {
+                emoji: '🤗',
+                title: 'Excited',
+                desc: 'You have lots of energy and can\'t wait for something! Your body might feel wiggly.',
+                strategies: [
+                    'Jump up and down or do a wiggle dance',
+                    'Share your excitement with someone',
+                    'Draw what you\'re excited about',
+                    'If you need to calm down: take deep breaths'
+                ],
+                remember: 'Excitement is fun! But if you need to focus, try the breathing exercise.'
+            },
+            tired: {
+                emoji: '😴',
+                title: 'Tired',
+                desc: 'Your body feels heavy and your eyes might want to close.',
+                strategies: [
+                    'Take a rest or nap',
+                    'Drink some water',
+                    'Do gentle stretches',
+                    'Ask for quiet time',
+                    'Go to bed early tonight'
+                ],
+                remember: 'Your body needs rest to grow strong! Listen to your body.'
+            }
+        };
+        
+        // Show Emotion Modal
+        function showEmotion(emotion) {
+            const data = emotionData[emotion];
+            document.getElementById('modalEmoji').textContent = data.emoji;
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalDesc').textContent = data.desc;
+            document.getElementById('modalRemember').textContent = data.remember;
+            
+            const strategiesList = document.getElementById('modalStrategies');
+            strategiesList.innerHTML = '';
+            data.strategies.forEach(strategy => {
+                const li = document.createElement('li');
+                li.textContent = strategy;
+                strategiesList.appendChild(li);
+            });
+            
+            document.getElementById('emotionModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('emotionModal').classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('emotionModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        
+        // Breathing Exercise
+        let breathing = false;
+        let breathInterval;
+        
+        function toggleBreathing() {
+            const circle = document.getElementById('breathingCircle');
+            const text = document.getElementById('breathText');
+            const instruction = document.getElementById('breathInstruction');
+            
+            if (!breathing) {
+                breathing = true;
+                circle.classList.add('breathing');
+                text.textContent = 'Breathe';
+                
+                let phase = 0; // 0: in, 1: hold, 2: out
+                
+                breathInterval = setInterval(() => {
+                    if (phase === 0) {
+                        instruction.textContent = 'Breathe in... 🌬️';
+                        phase = 1;
+                    } else if (phase === 1) {
+                        instruction.textContent = 'Hold... 😊';
+                        phase = 2;
+                    } else {
+                        instruction.textContent = 'Breathe out... 💨';
+                        phase = 0;
+                    }
+                }, 2000);
+            } else {
+                breathing = false;
+                circle.classList.remove('breathing');
+                text.textContent = 'Click to Start!';
+                instruction.textContent = 'Ready to breathe?';
+                clearInterval(breathInterval);
+            }
+        }
+        
+        // Check-in Functionality
+        function selectFeeling(element, feeling) {
+            // Remove selected from all
+            document.querySelectorAll('.feeling-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Add selected to clicked
+            element.classList.add('selected');
+            
+            // Show response
+            const responseArea = document.getElementById('responseArea');
+            const title = document.getElementById('responseTitle');
+            const text = document.getElementById('responseText');
+            const strategies = document.getElementById('responseStrategies');
+            
+            responseArea.classList.add('active');
+            
+            const responses = {
+                happy: {
+                    title: 'You\'re feeling happy! 😊',
+                    text: 'That\'s wonderful! Happy feelings are like sunshine.',
+                    strategies: ['Keep doing what you\'re doing!', 'Share your smile with someone', 'Remember this moment']
+                },
+                sad: {
+                    title: 'You\'re feeling sad. 😢',
+                    text: 'That\'s okay. Sad feelings are normal and they will pass.',
+                    strategies: ['Would you like to talk about it?', 'Try the Blue Zone tools', 'Ask for a hug when you\'re ready']
+                },
+                angry: {
+                    title: 'You\'re feeling angry. 😠',
+                    text: 'It\'s okay to feel angry. Let\'s use some tools to help.',
+                    strategies: ['Try the Turtle Technique 🐢', 'Take 3 deep breaths', 'Use the Red Zone tools above']
+                },
+                scared: {
+                    title: 'You\'re feeling worried. 😨',
+                    text: 'It takes courage to notice when you feel scared.',
+                    strategies: ['You are safe right now', 'Try the breathing exercise', 'Talk to a grown-up you trust']
+                },
+                excited: {
+                    title: 'You\'re feeling excited! 🤗',
+                    text: 'Excitement is energy in your body!',
+                    strategies: ['If you need to calm down, try breathing', 'If it\'s time to play, enjoy it!', 'Share your excitement']
+                },
+                tired: {
+                    title: 'You\'re feeling tired. 😴',
+                    text: 'Your body is telling you it needs rest.',
+                    strategies: ['Take a break if you can', 'Drink some water', 'Do some gentle stretches']
+                }
+            };
+            
+            const response = responses[feeling];
+            title.textContent = response.title;
+            text.textContent = response.text;
+            strategies.innerHTML = '<strong>Try this:</strong><br>' + response.strategies.join('<br>• ');
+        }
+        
+        // Toolkit Detail
+        function showToolDetail(tool) {
+            const toolInfo = {
+                water: '💧 Drink some water slowly. Feel it cool your body from the inside!',
+                walk: '🚶 Take a walk around the room or outside. Moving helps big feelings move through!',
+                hug: '🤗 Ask someone you trust for a hug. Physical touch helps calm our nervous system.',
+                draw: '🎨 Draw your feelings or scribble them out. Getting it on paper helps!',
+                music: '🎵 Listen to your favorite song or some calm music. Music changes our mood!',
+                squeeze: '🧸 Squeeze something soft tight, then let go. Feel the tension release!',
+                count: '🔢 Count slowly to 10. This gives your brain time to catch up with your feelings.',
+                talk: '💬 Use your words to tell someone how you feel. Say "I feel ___ because ___"'
+            };
+            
+            alert(toolInfo[tool]);
+        }
+        
+        // Zone Expansion
+        function expandZone(element) {
+            element.style.transform = element.style.transform === 'scale(1.05)' ? 'scale(1)' : 'scale(1.05)';
+        }
+        
+        // Character Tips
+        const tips = [
+            "Did you know? Naming your feelings helps your brain feel better!",
+            "Try the Turtle Technique when feelings get too big! 🐢",
+            "All feelings are okay to have - even the tricky ones!",
+            "Your breath is a superpower - use it anytime!",
+            "When in doubt, ask for a hug! 🤗"
+        ];
+        
+        function showTip() {
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            alert('🦊 Finley says: ' + randomTip);
+        }
+        
+        // Confetti Effect
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = ['#ff0', '#f0f', '#0ff', '#0f0', '#ff6b6b'][Math.floor(Math.random() * 5)];
+                confetti.style.animationDuration = Math.random() * 2 + 2 + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+        
+        // Keyboard accessibility
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
